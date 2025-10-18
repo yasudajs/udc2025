@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BODIK Data Viewer - UDC2025</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <!-- ヘッダー -->
+        <header class="header">
+            <h1>BODIK Data Viewer</h1>
+            <p class="subtitle">UDC2025 - オープンデータを地図で見てみよう</p>
+        </header>
+
+        <!-- コントロールパネル -->
+        <div class="control-panel">
+            <div class="category-buttons">
+                <button class="category-btn active" data-category="aed">AED</button>
+                <button class="category-btn" data-category="hospital">医療機関</button>
+                <button class="category-btn" data-category="freewifi">公衆無線LAN</button>
+                <button class="category-btn" data-category="evacuation">指定緊急避難場所</button>
+                <button class="category-btn" data-category="toilet">公衆トイレ</button>
+            </div>
+
+            <div class="control-buttons">
+                <button id="current-location-btn" class="control-btn">
+                    📍 現在地を表示
+                </button>
+                <button id="refresh-btn" class="control-btn">
+                    🔄 更新
+                </button>
+            </div>
+        </div>
+
+        <!-- 地図表示エリア -->
+        <div id="map" class="map-container"></div>
+
+        <!-- ローディング表示 -->
+        <div id="loading" class="loading hidden">
+            <div class="loading-spinner"></div>
+            <p>データを読み込み中...</p>
+        </div>
+
+        <!-- フッター -->
+        <footer class="footer">
+            <p>データ提供: BODIK ODCS（<a href="https://odcs.bodik.jp/" target="_blank"
+                    rel="noopener">https://odcs.bodik.jp/</a>）</p>
+            <p class="copyright">&copy; 2025 UDC2025</p>
+        </footer>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/map.js') }}"></script>
+</body>
+
+</html>
