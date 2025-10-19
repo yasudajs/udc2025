@@ -227,8 +227,12 @@ body {
 }
 
 #map {
-    width: 100%;
-    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
 }
 
 /* ========================================
@@ -275,25 +279,20 @@ body {
    フッター
    ======================================== */
 .footer {
-    background: #333;
-    color: white;
-    padding: 1rem;
-    text-align: center;
-    font-size: 0.85rem;
-    margin-top: auto;
-}
-
-.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
     background: #333;
     color: white;
     height: 50px;
     padding: 0.5rem 0;
     text-align: center;
     font-size: 0.85rem;
-    margin-top: auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    z-index: 1000;
 }
 
 /* ========================================
@@ -319,6 +318,16 @@ body {
 .custom-marker-icon {
     background: none;
     border: none;
+}
+
+/* ========================================
+   Leafletコントロールの位置固定
+   ======================================== */
+.leaflet-control-zoom {
+    position: fixed !important;
+    top: 100px !important;
+    right: 10px !important;
+    z-index: 1000 !important;
 }
 
 /* ========================================
