@@ -4,6 +4,8 @@
 let map;
 let markers = [];
 let currentCategory = 'aed';
+let lastLoadedCenter = null; // 最後にデータを読み込んだ時の中心座標
+let isPopupOpening = false; // ポップアップ表示中かどうか
 
 // 福岡SRPセンタービルの中心座標
 const DEFAULT_CENTER = {
@@ -60,6 +62,31 @@ function initMap() {
     // 地図の移動・ズーム終了イベント
     map.on('moveend', function () {
         console.log('地図の移動が完了しました');
+
+        // ポップアップ表示による移動の場合はスキップ
+        if (isPopupOpening) {
+            console.log('ポップアップ表示による移動のためデータ再読み込みをスキップ');
+            isPopupOpening = false;
+            return;
+        }
+
+        // 地図の中心座標を取得
+        const currentCenter = map.getCenter();
+
+        // 前回のデータ読み込み位置と比較
+        if (lastLoadedCenter) {
+            const distance = calculateDistance(
+                lastLoadedCenter.lat, lastLoadedCenter.lng,
+                currentCenter.lat, currentCenter.lng
+            );
+
+            // 移動距離が2000m未満の場合はデータ再読み込みをスキップ
+            if (distance < 2000) {
+                console.log(`移動距離が小さいため再読み込みスキップ (${Math.round(distance)}m)`);
+                return;
+            }
+        }
+
         loadDataForCurrentCategory();
     });
 
@@ -183,6 +210,9 @@ function loadDataForCurrentCategory() {
     const lat = center.lat;
     const lon = center.lng;
 
+    // 最後にデータを読み込んだ位置を記録
+    lastLoadedCenter = { lat: lat, lng: lon };
+
     // APIのURLを構築
     const distance = 20000; // 検索半径（メートル）
     const maxResults = 100; // 最大取得件数
@@ -271,6 +301,17 @@ function displayMarkers(features) {
             // ポップアップを設定
             const popup = L.popup().setContent(popupContent);
             marker.bindPopup(popup);
+
+            // マーカークリック時のイベントリスナー
+            marker.on('click', function () {
+                isPopupOpening = true;
+                // ポップアップを開く
+                marker.openPopup();
+                // フラグを元に戻す（少し遅延させる）
+                setTimeout(() => {
+                    isPopupOpening = false;
+                }, 100);
+            });
 
             // マーカーを配列に保存
             markers.push(marker);
@@ -370,3 +411,23 @@ function addTestMarkers() {
 
 // デバッグ用：コンソールからテストマーカーを追加できるようにする
 window.addTestMarkers = addTestMarkers;
+
+// ========================================
+// 2地点間の距離を計算（単位：メートル）
+// ========================================
+function calculateDistance(lat1, lng1, lat2, lng2) {
+    // Haversine式で2地点間の距離を計算
+    const R = 6371e3; // 地球の半径（メートル）
+    const φ1 = lat1 * Math.PI / 180;
+    const φ2 = lat2 * Math.PI / 180;
+    const Δφ = (lat2 - lat1) * Math.PI / 180;
+    const Δλ = (lng2 - lng1) * Math.PI / 180;
+
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+        Math.cos(φ1) * Math.cos(φ2) *
+        Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    const distance = R * c; // メートル単位
+    return distance;
+}

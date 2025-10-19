@@ -1,3 +1,14 @@
+/* フッター内のリンク色を明るく */
+.footer a {
+    color: #66b3ff;
+    text-decoration: underline;
+    transition: color 0.2s;
+}
+
+.footer a:hover {
+    color: #ffe066;
+}
+
 /* ========================================
    基本設定
    ======================================== */
@@ -178,12 +189,17 @@ body {
     margin-top: auto;
 }
 
-.footer p {
-    margin: 0.25rem 0;
-}
-
-.copyright {
-    opacity: 0.7;
+.footer {
+    background: #333;
+    color: white;
+    height: 50px;
+    padding: 0.5rem 0;
+    text-align: center;
+    font-size: 0.85rem;
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 /* ========================================
