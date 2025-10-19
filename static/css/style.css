@@ -122,6 +122,10 @@ body {
    ヘッダー
    ======================================== */
 .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     height: 80px;
@@ -131,6 +135,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    z-index: 1500;
 }
 
 .header h1 {
@@ -218,6 +223,7 @@ body {
     min-height: 0;
     position: relative;
     z-index: 1;
+    margin-top: 80px;
 }
 
 #map {
