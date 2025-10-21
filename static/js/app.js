@@ -39,7 +39,7 @@ function initApp() {
         initMap((features) => displayMarkers(features, currentCategoryRef.current, map, markers));
 
         // UIイベントリスナーの設定
-        setupEventListeners(currentCategoryRef, handleLoadDataForCurrentCategory);
+        setupEventListeners(currentCategoryRef, handleLoadDataForCurrentCategory, map);
 
         // 初期データ読み込みは地図の moveend イベントで自動実行
         console.log('UDC2025 アプリケーションの初期化が完了しました');

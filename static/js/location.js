@@ -9,7 +9,7 @@ import { showNotification, showLoading, clearCurrentLocationMarkers } from './ut
 // ========================================
 // 現在地マーカーの追加
 // ========================================
-export function addCurrentLocationMarker(lat, lng) {
+export function addCurrentLocationMarker(lat, lng, map) {
     // 現在地マーカーを追加
     const currentLocationMarker = L.marker([lat, lng], {
         icon: L.icon({
@@ -36,7 +36,7 @@ export function addCurrentLocationMarker(lat, lng) {
 // ========================================
 // 現在地の表示
 // ========================================
-export function showCurrentLocation() {
+export function showCurrentLocation(map) {
     if (!navigator.geolocation) {
         showNotification('お使いのブラウザは位置情報に対応していません', 'error');
         return;
@@ -57,7 +57,7 @@ export function showCurrentLocation() {
             clearCurrentLocationMarkers();
 
             // 現在地マーカーを追加
-            const marker = addCurrentLocationMarker(lat, lng);
+            const marker = addCurrentLocationMarker(lat, lng, map);
             marker.openPopup(); // 現在地ボタン押下時はポップアップを開く
 
             showNotification('現在地を表示しました', 'success');

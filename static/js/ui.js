@@ -8,7 +8,7 @@ import { showCurrentLocation } from './location.js';
 // ========================================
 // イベントリスナーの設定
 // ========================================
-export function setupEventListeners(currentCategoryRef, loadDataForCurrentCategoryCallback) {
+export function setupEventListeners(currentCategoryRef, loadDataForCurrentCategoryCallback, map) {
     // カテゴリボタンのクリックイベント
     const categoryButtons = document.querySelectorAll('.category-btn');
     categoryButtons.forEach(button => {
@@ -29,7 +29,7 @@ export function setupEventListeners(currentCategoryRef, loadDataForCurrentCatego
     // 現在地ボタンのクリックイベント
     const currentLocationBtn = document.getElementById('current-location-btn');
     currentLocationBtn.addEventListener('click', function () {
-        showCurrentLocation();
+        showCurrentLocation(map);
     });
 
     // 更新ボタンのクリックイベント

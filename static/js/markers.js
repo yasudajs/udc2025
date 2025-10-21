@@ -14,6 +14,12 @@ export function displayMarkers(features, currentCategoryParam, mapParam, markers
     // 既存のマーカーをクリア
     clearMarkers();
 
+    // featuresの型チェックを追加
+    if (!features || !Array.isArray(features)) {
+        console.warn('featuresが配列ではありません:', features);
+        return;
+    }
+
     // カテゴリに応じたマーカーアイコンを作成
     const markerIcon = createMarkerIcon(currentCategoryParam);
 
