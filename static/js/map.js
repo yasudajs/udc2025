@@ -7,7 +7,7 @@ let currentCategory = 'aed';
 let lastLoadedCenter = null; // 最後にデータを読み込んだ時の中心座標
 let isPopupOpening = false; // ポップアップ表示中かどうか
 
-// 福岡SRPセンタービルの中心座標
+// デフォルトの表示位置として福岡SRPセンタービルの中心座標
 const DEFAULT_CENTER = {
     lat: 33.590200, // 緯度
     lng: 130.351903, // 経度
@@ -33,6 +33,13 @@ const MARKER_COLORS = {
     toilet: '#9b59b6'      // 紫
 };
 
+// 位置情報取得の設定
+const GEOLOCATION_OPTIONS = {
+    timeout: 5000,         // 5秒タイムアウト
+    enableHighAccuracy: false,  // 速度優先
+    maximumAge: 300000     // 5分以内のキャッシュ位置を使用
+};
+
 // ========================================
 // 初期化処理
 // ========================================
@@ -46,12 +53,52 @@ document.addEventListener('DOMContentLoaded', function () {
 // 地図の初期化
 // ========================================
 function initMap() {
-    // Leaflet地図の初期化
-    map = L.map('map').setView(
-        [DEFAULT_CENTER.lat, DEFAULT_CENTER.lng],
-        DEFAULT_CENTER.zoom
-    );
+    // 位置情報取得を試みるPromise
+    const getLocationPromise = new Promise((resolve, reject) => {
+        if (!navigator.geolocation) {
+            reject(new Error('Geolocation not supported'));
+            return;
+        }
 
+        navigator.geolocation.getCurrentPosition(
+            (position) => resolve(position),
+            (error) => reject(error),
+            GEOLOCATION_OPTIONS
+        );
+    });
+
+    // 位置情報取得を試みて地図を初期化
+    getLocationPromise
+        .then((position) => {
+            // 位置情報取得成功: 現在地で地図を初期化
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            map = L.map('map').setView([lat, lng], 15);
+
+            // 現在地マーカーを追加し、ポップアップを開く
+            const marker = addCurrentLocationMarker(lat, lng);
+            marker.openPopup(); // 初期表示時はポップアップを開く
+
+            console.log('位置情報取得成功、現在地で地図を初期化しました');
+        })
+        .catch((error) => {
+            // 位置情報取得失敗: デフォルト位置で地図を初期化
+            console.log('位置情報取得失敗、デフォルト位置で地図を初期化しました:', error.message);
+            map = L.map('map').setView(
+                [DEFAULT_CENTER.lat, DEFAULT_CENTER.lng],
+                DEFAULT_CENTER.zoom
+            );
+        })
+        .finally(() => {
+            // 共通の地図設定
+            setupMapLayers();
+        });
+}
+
+// ========================================
+// 地図レイヤーとイベントの設定
+// ========================================
+function setupMapLayers() {
     // OpenStreetMapタイルレイヤーの追加
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -90,10 +137,10 @@ function initMap() {
         loadDataForCurrentCategory();
     });
 
-    // 初回データ読み込み（moveendは初回発火しないため）
+    // 初回データ読み込み（位置情報取得後に実行）
     loadDataForCurrentCategory();
 
-    console.log('Leaflet地図を初期化しました');
+    console.log('Leaflet地図のレイヤーとイベントを設定しました');
 }
 
 // ========================================
@@ -131,6 +178,33 @@ function setupEventListeners() {
 }
 
 // ========================================
+// 現在地マーカーの追加
+// ========================================
+function addCurrentLocationMarker(lat, lng) {
+    // 現在地マーカーを追加
+    const currentLocationMarker = L.marker([lat, lng], {
+        icon: L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        })
+    })
+        .addTo(map)
+        .bindPopup('<b>現在地</b>');
+
+    // マーカーを現在地マーカー配列に保存（重複管理のため）
+    if (!window.currentLocationMarkers) {
+        window.currentLocationMarkers = [];
+    }
+    window.currentLocationMarkers.push(currentLocationMarker);
+
+    return currentLocationMarker;
+}
+
+// ========================================
 // 現在地の表示
 // ========================================
 function showCurrentLocation() {
@@ -140,6 +214,7 @@ function showCurrentLocation() {
     }
 
     showNotification('現在地を取得中...');
+    showLoading(true); // ローディング表示を開始
 
     navigator.geolocation.getCurrentPosition(
         function (position) {
@@ -149,38 +224,33 @@ function showCurrentLocation() {
             // 地図を現在地に移動
             map.setView([lat, lng], 15);
 
+            // 既存の現在地マーカーをクリア
+            clearCurrentLocationMarkers();
+
             // 現在地マーカーを追加
-            L.marker([lat, lng], {
-                icon: L.icon({
-                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
-                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-                    iconSize: [25, 41],
-                    iconAnchor: [12, 41],
-                    popupAnchor: [1, -34],
-                    shadowSize: [41, 41]
-                })
-            })
-                .addTo(map)
-                .bindPopup('<b>現在地</b>')
-                .openPopup();
+            const marker = addCurrentLocationMarker(lat, lng);
+            marker.openPopup(); // 現在地ボタン押下時はポップアップを開く
 
             showNotification('現在地を表示しました', 'success');
+            showLoading(false); // ローディング表示を終了
         },
         function (error) {
             let errorMessage = '現在地の取得に失敗しました';
             switch (error.code) {
                 case error.PERMISSION_DENIED:
-                    errorMessage = '位置情報の使用が許可されていません';
+                    errorMessage = '位置情報の使用が許可されていません。ブラウザの設定で位置情報へのアクセスを許可してください。';
                     break;
                 case error.POSITION_UNAVAILABLE:
-                    errorMessage = '位置情報が取得できません';
+                    errorMessage = '位置情報が取得できません。電波状況やGPS設定を確認してください。';
                     break;
                 case error.TIMEOUT:
-                    errorMessage = '位置情報の取得がタイムアウトしました';
+                    errorMessage = '位置情報の取得がタイムアウトしました（5秒以内に応答がありませんでした）。電波状況を確認するか、再度お試しください。';
                     break;
             }
             showNotification(errorMessage, 'error');
-        }
+            showLoading(false); // ローディング表示を終了
+        },
+        GEOLOCATION_OPTIONS
     );
 }
 
@@ -384,8 +454,16 @@ function clearMarkers() {
 }
 
 // ========================================
-// デバッグ用：テストマーカーの追加
+// 現在地マーカーのクリア
 // ========================================
+function clearCurrentLocationMarkers() {
+    if (window.currentLocationMarkers) {
+        window.currentLocationMarkers.forEach(marker => {
+            map.removeLayer(marker);
+        });
+        window.currentLocationMarkers = [];
+    }
+}
 function addTestMarkers() {
     // 宇都宮市内の3箇所にテストマーカーを追加
     const testLocations = [
