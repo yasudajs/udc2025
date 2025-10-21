@@ -5,6 +5,7 @@
 
 import { CONFIG } from './config.js';
 import { calculateDistance } from './utils.js';
+import { addCurrentLocationMarker } from './location.js';
 
 // ========================================
 // グローバル変数（地図コア用）
@@ -16,7 +17,7 @@ let isPopupOpening = false; // ポップアップ表示中かどうか
 // ========================================
 // 地図の初期化
 // ========================================
-export function initMap(addCurrentLocationMarker, loadDataForCurrentCategory) {
+export function initMap(loadDataForCurrentCategory) {
     // 位置情報取得を試みるPromise
     const getLocationPromise = new Promise((resolve, reject) => {
         if (!navigator.geolocation) {

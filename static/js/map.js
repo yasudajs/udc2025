@@ -14,14 +14,15 @@ import {
     calculateDistance
 } from './utils.js';
 
-// 地図コア機能のインポート
+// 地図コア機能と現在地機能のインポート
 import { map, initMap, setupMapLayers, setPopupOpeningState } from './map-core.js';
+import { addCurrentLocationMarker, showCurrentLocation } from './location.js';
 
 // ========================================
 // 初期化処理
 // ========================================
 document.addEventListener('DOMContentLoaded', function () {
-    initMap(addCurrentLocationMarker, loadDataForCurrentCategory);
+    initMap(loadDataForCurrentCategory);
     setupEventListeners();
     // 初期データは地図の moveend イベントで自動読み込み
 });
@@ -58,83 +59,6 @@ function setupEventListeners() {
     refreshBtn.addEventListener('click', function () {
         refreshData();
     });
-}
-
-// ========================================
-// 現在地マーカーの追加
-// ========================================
-function addCurrentLocationMarker(lat, lng) {
-    // 現在地マーカーを追加
-    const currentLocationMarker = L.marker([lat, lng], {
-        icon: L.icon({
-            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
-            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [1, -34],
-            shadowSize: [41, 41]
-        })
-    })
-        .addTo(map)
-        .bindPopup('<b>現在地</b>');
-
-    // マーカーを現在地マーカー配列に保存（重複管理のため）
-    if (!window.currentLocationMarkers) {
-        window.currentLocationMarkers = [];
-    }
-    window.currentLocationMarkers.push(currentLocationMarker);
-
-    return currentLocationMarker;
-}
-
-// ========================================
-// 現在地の表示
-// ========================================
-function showCurrentLocation() {
-    if (!navigator.geolocation) {
-        showNotification('お使いのブラウザは位置情報に対応していません', 'error');
-        return;
-    }
-
-    showNotification('現在地を取得中...');
-    showLoading(true); // ローディング表示を開始
-
-    navigator.geolocation.getCurrentPosition(
-        function (position) {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-
-            // 地図を現在地に移動
-            map.setView([lat, lng], 15);
-
-            // 既存の現在地マーカーをクリア
-            clearCurrentLocationMarkers();
-
-            // 現在地マーカーを追加
-            const marker = addCurrentLocationMarker(lat, lng);
-            marker.openPopup(); // 現在地ボタン押下時はポップアップを開く
-
-            showNotification('現在地を表示しました', 'success');
-            showLoading(false); // ローディング表示を終了
-        },
-        function (error) {
-            let errorMessage = '現在地の取得に失敗しました';
-            switch (error.code) {
-                case error.PERMISSION_DENIED:
-                    errorMessage = '位置情報の使用が許可されていません。ブラウザの設定で位置情報へのアクセスを許可してください。';
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    errorMessage = '位置情報が取得できません。電波状況やGPS設定を確認してください。';
-                    break;
-                case error.TIMEOUT:
-                    errorMessage = '位置情報の取得がタイムアウトしました（5秒以内に応答がありませんでした）。電波状況を確認するか、再度お試しください。';
-                    break;
-            }
-            showNotification(errorMessage, 'error');
-            showLoading(false); // ローディング表示を終了
-        },
-        CONFIG.geolocation
-    );
 }
 
 // ========================================
