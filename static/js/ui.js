@@ -26,6 +26,14 @@ export function setupEventListeners(currentCategoryRef, loadDataForCurrentCatego
         });
     });
 
+    // 地図の移動・ズーム終了イベント（データ再読み込み）
+    map.on('moveend', function () {
+        console.log('地図の移動が完了しました');
+
+        // データの再読み込み
+        loadDataForCurrentCategoryCallback();
+    });
+
     // 現在地ボタンのクリックイベント
     const currentLocationBtn = document.getElementById('current-location-btn');
     currentLocationBtn.addEventListener('click', function () {

@@ -36,12 +36,14 @@ function initApp() {
         console.log('UDC2025 アプリケーションを初期化中...');
 
         // 地図の初期化
-        initMap((features) => displayMarkers(features, currentCategoryRef.current, map, markers));
+        initMap();
 
         // UIイベントリスナーの設定
         setupEventListeners(currentCategoryRef, handleLoadDataForCurrentCategory, map);
 
-        // 初期データ読み込みは地図の moveend イベントで自動実行
+        // 初期データ読み込み（AEDデフォルト選択のため）
+        handleLoadDataForCurrentCategory();
+
         console.log('UDC2025 アプリケーションの初期化が完了しました');
 
     } catch (error) {

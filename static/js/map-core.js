@@ -17,7 +17,7 @@ let isPopupOpening = false; // ポップアップ表示中かどうか
 // ========================================
 // 地図の初期化
 // ========================================
-export function initMap(loadDataForCurrentCategory) {
+export function initMap() {
     // 既存の地図インスタンスを破棄
     if (map) {
         map.remove();
@@ -144,14 +144,14 @@ export function initMap(loadDataForCurrentCategory) {
         })
         .finally(() => {
             // 共通の地図設定
-            setupMapLayers(loadDataForCurrentCategory);
+            setupMapLayers();
         });
 }
 
 // ========================================
 // 地図レイヤーとイベントの設定
 // ========================================
-export function setupMapLayers(loadDataForCurrentCategory) {
+export function setupMapLayers() {
     // mapオブジェクトの存在チェック
     if (!map) {
         console.error('地図が初期化されていません');
@@ -165,41 +165,7 @@ export function setupMapLayers(loadDataForCurrentCategory) {
         minZoom: 10
     }).addTo(map);
 
-    // 地図の移動・ズーム終了イベント
-    map.on('moveend', function () {
-        console.log('地図の移動が完了しました');
-
-        // ポップアップ表示による移動の場合はスキップ
-        if (isPopupOpening) {
-            console.log('ポップアップ表示による移動のためデータ再読み込みをスキップ');
-            isPopupOpening = false;
-            return;
-        }
-
-        // 地図の中心座標を取得
-        const currentCenter = map.getCenter();
-
-        // 前回のデータ読み込み位置と比較
-        if (lastLoadedCenter) {
-            const distance = calculateDistance(
-                lastLoadedCenter.lat, lastLoadedCenter.lng,
-                currentCenter.lat, currentCenter.lng
-            );
-
-            // 移動距離が2000m未満の場合はデータ再読み込みをスキップ
-            if (distance < 2000) {
-                console.log(`移動距離が小さいため再読み込みスキップ (${Math.round(distance)}m)`);
-                return;
-            }
-        }
-
-        loadDataForCurrentCategory();
-    });
-
-    // 初回データ読み込み（位置情報取得後に実行）
-    loadDataForCurrentCategory();
-
-    console.log('Leaflet地図のレイヤーとイベントを設定しました');
+    console.log('Leaflet地図のレイヤーを設定しました');
 }
 
 // ========================================
