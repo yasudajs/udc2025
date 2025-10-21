@@ -1,0 +1,48 @@
+/* ========================================
+   地図関連スタイル
+   ======================================== */
+
+/* 地図本体 */
+#map {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+}
+
+/* ========================================
+   Leafletカスタマイズ
+   ======================================== */
+.leaflet-popup-content-wrapper {
+    border-radius: 8px;
+    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.2);
+}
+
+.leaflet-popup-content {
+    margin: 1rem;
+    font-size: 0.9rem;
+}
+
+.leaflet-popup-content h3 {
+    margin: 0 0 0.5rem 0;
+    color: #667eea;
+    font-size: 1.1rem;
+}
+
+/* カスタムマーカーアイコン */
+.custom-marker-icon {
+    background: none;
+    border: none;
+}
+
+/* ========================================
+   Leafletコントロールの位置固定
+   ======================================== */
+.leaflet-control-zoom {
+    position: fixed !important;
+    top: 100px !important;
+    right: 10px !important;
+    z-index: 1000 !important;
+}

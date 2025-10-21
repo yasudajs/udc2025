@@ -1,0 +1,240 @@
+/* ========================================
+   コンポーネント別スタイル
+   ======================================== */
+
+/* ========================================
+   ハンバーガーメニュー用スタイル
+   ======================================== */
+.menu-toggle {
+    position: fixed;
+    top: 18px;
+    left: 8px;
+    z-index: 2001;
+    background: #667eea;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    width: 44px;
+    height: 44px;
+    font-size: 2rem;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.menu-toggle:hover {
+    background: #4958b8;
+}
+
+.side-menu {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 280px;
+    height: 100vh;
+    background: #fff;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.12);
+    z-index: 2002;
+    padding: 2.5rem 1.2rem 1.2rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    transition: left 0.3s cubic-bezier(.4, 0, .2, 1);
+}
+
+.side-menu.open {
+    left: 0;
+}
+
+.menu-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: none;
+    color: #667eea;
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 2003;
+}
+
+@media (max-width: 600px) {
+    .side-menu {
+        width: 50vw;
+        min-width: 0;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+}
+
+/* ========================================
+   コントロールパネル
+   ======================================== */
+.control-panel {
+    background: white;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.category-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.category-btn {
+    padding: 0.6rem 1.2rem;
+    border: 2px solid #667eea;
+    background: white;
+    color: #667eea;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.category-btn:hover {
+    background: #f0f4ff;
+    transform: translateY(-2px);
+}
+
+.category-btn.active {
+    background: #667eea;
+    color: white;
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+.control-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.control-btn {
+    padding: 0.6rem 1rem;
+    border: 1px solid #ddd;
+    background: white;
+    color: #333;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.control-btn:hover {
+    background: #f8f8f8;
+    border-color: #667eea;
+}
+
+/* ========================================
+   サイドメニュー内のボタン配置調整
+   ======================================== */
+.side-menu .category-buttons,
+.side-menu .control-buttons {
+    flex-direction: column;
+    gap: 0.7rem;
+    align-items: stretch;
+    justify-content: flex-start;
+    display: flex;
+    margin-bottom: 0;
+}
+
+.side-menu .category-btn,
+.side-menu .control-btn {
+    width: 100%;
+    margin: 0;
+    border-radius: 8px;
+}
+
+/* ========================================
+   ローディング表示
+   ======================================== */
+.loading {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    z-index: 2000;
+}
+
+.loading.hidden {
+    display: none;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* ========================================
+   フッター内のリンク色
+   ======================================== */
+.footer a {
+    color: #66b3ff;
+    text-decoration: underline;
+    transition: color 0.2s;
+}
+
+.footer a:hover {
+    color: #ffe066;
+}
+
+/* ========================================
+   レスポンシブ対応（コンポーネント）
+   ======================================== */
+@media (max-width: 768px) {
+    .category-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .control-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .control-panel {
+        padding: 0.75rem;
+    }
+
+    .category-buttons {
+        gap: 0.4rem;
+    }
+
+    .category-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+}
