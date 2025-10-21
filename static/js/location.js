@@ -12,13 +12,11 @@ import { showNotification, showLoading, clearCurrentLocationMarkers } from './ut
 export function addCurrentLocationMarker(lat, lng, map) {
     // 現在地マーカーを追加
     const currentLocationMarker = L.marker([lat, lng], {
-        icon: L.icon({
-            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
-            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [1, -34],
-            shadowSize: [41, 41]
+        icon: L.divIcon({
+            html: '📍',
+            className: 'current-location-icon',
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
         })
     })
         .addTo(map)

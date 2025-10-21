@@ -12,12 +12,10 @@ import { calculateDistance } from './utils.js';
 // ========================================
 function setDefaultButtonStyle(button, category) {
     const color = CONFIG.ui.markerColors[category];
-    button.style.backgroundColor = '#e0e0e0'; // 薄灰色
+    button.style.backgroundColor = '#f5f5f5'; // より薄い灰色
     button.style.color = '#333'; // 暗い文字色
-    button.style.border = color ? `2px solid ${color}` : 'none'; // 枠線をピンの色に
-}
-
-function setActiveButtonStyle(button, category) {
+    button.style.border = color ? `2px solid ${color}` : 'none'; // 枠線をピンの色に 
+} function setActiveButtonStyle(button, category) {
     const color = CONFIG.ui.markerColors[category];
     if (color) {
         button.style.backgroundColor = color;
@@ -82,6 +80,21 @@ export function setupEventListeners(currentCategoryRef, loadDataForCurrentCatego
     const refreshBtn = document.getElementById('refresh-btn');
     refreshBtn.addEventListener('click', function () {
         refreshData(loadDataForCurrentCategoryCallback);
+    });
+
+    // 地図の移動・ズーム終了イベント（データ再読み込み）
+    map.on('moveend', function () {
+        const currentCenter = map.getCenter();
+        const distance = calculateDistance(lastCenter.lat, lastCenter.lng, currentCenter.lat, currentCenter.lng);
+
+        console.log(`地図の移動距離: ${distance.toFixed(0)}m`);
+
+        // 移動距離が閾値を超えた場合のみデータ再読み込み
+        if (distance > CONFIG.ui.reloadDistanceThreshold) {
+            console.log('移動距離が閾値を超えたため、データを再読み込みします');
+            loadDataForCurrentCategoryCallback();
+            lastCenter = currentCenter;
+        }
     });
 }
 
