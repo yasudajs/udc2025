@@ -4,7 +4,6 @@
 // ========================================
 
 import { CONFIG } from './config.js';
-import { calculateDistance } from './utils.js';
 import { addCurrentLocationMarker } from './location.js';
 
 // ========================================

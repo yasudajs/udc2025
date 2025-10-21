@@ -36,7 +36,8 @@ export const CONFIG = {
             freewifi: '#27ae60',    // 緑
             evacuation: '#f39c12',  // オレンジ
             toilet: '#9b59b6'       // 紫
-        }
+        },
+        reloadDistanceThreshold: 2000  // 地図移動時のデータ再読み込み閾値（メートル）
     },
 
     // 位置情報設定
