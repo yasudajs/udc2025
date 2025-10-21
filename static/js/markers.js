@@ -4,14 +4,6 @@
 // ========================================
 
 import { CONFIG } from './config.js';
-import { setPopupOpeningState } from './map-core.js';
-
-// ========================================
-// マーカー管理機能
-// 地図上のマーカー表示と管理を担当
-// ========================================
-
-import { CONFIG } from './config.js';
 import { clearMarkers } from './utils.js';
 import { setPopupOpeningState } from './map-core.js';
 

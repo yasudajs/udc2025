@@ -39,7 +39,7 @@ function initApp() {
         initMap((features) => displayMarkers(features, currentCategoryRef.current, map, markers));
 
         // UIイベントリスナーの設定
-        setupEventListeners(currentCategoryRef, loadDataForCurrentCategory);
+        setupEventListeners(currentCategoryRef, handleLoadDataForCurrentCategory);
 
         // 初期データ読み込みは地図の moveend イベントで自動実行
         console.log('UDC2025 アプリケーションの初期化が完了しました');
@@ -53,7 +53,7 @@ function initApp() {
 // ========================================
 // BODIK APIからデータ取得（ラッパー関数）
 // ========================================
-function loadDataForCurrentCategory() {
+function handleLoadDataForCurrentCategory() {
     const lastLoadedCenterRef = { current: lastLoadedCenter };
     loadDataForCurrentCategory(
         (features) => displayMarkers(features, currentCategoryRef.current, map, markers),
