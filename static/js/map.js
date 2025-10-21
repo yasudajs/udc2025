@@ -7,38 +7,15 @@ let currentCategory = 'aed';
 let lastLoadedCenter = null; // 最後にデータを読み込んだ時の中心座標
 let isPopupOpening = false; // ポップアップ表示中かどうか
 
-// デフォルトの表示位置として福岡SRPセンタービルの中心座標
-const DEFAULT_CENTER = {
-    lat: 33.590200, // 緯度
-    lng: 130.351903, // 経度
-    zoom: 16
-};
-
-// BODIK API設定
-const BODIK_API_SERVER = 'https://wapi.bodik.jp';
-const API_CONFIG = {
-    aed: { endpoint: 'aed', name: 'AED' },
-    hospital: { endpoint: 'hospital', name: '医療機関' },
-    freewifi: { endpoint: 'public_wireless_lan', name: '公衆無線LANアクセスポイント' },
-    evacuation: { endpoint: 'evacuation_space', name: '指定緊急避難場所' },
-    toilet: { endpoint: 'public_toilet', name: '公衆トイレ' }
-};
-
-// カテゴリ別のマーカーアイコン色設定
-const MARKER_COLORS = {
-    aed: '#e74c3c',        // 赤
-    hospital: '#3498db',    // 青
-    freewifi: '#27ae60',       // 緑
-    evacuation: '#f39c12', // オレンジ
-    toilet: '#9b59b6'      // 紫
-};
-
-// 位置情報取得の設定
-const GEOLOCATION_OPTIONS = {
-    timeout: 5000,         // 5秒タイムアウト
-    enableHighAccuracy: false,  // 速度優先
-    maximumAge: 300000     // 5分以内のキャッシュ位置を使用
-};
+// 設定とユーティリティのインポート
+import { CONFIG } from './config.js';
+import {
+    showNotification,
+    showLoading,
+    clearMarkers,
+    clearCurrentLocationMarkers,
+    calculateDistance
+} from './utils.js';
 
 // ========================================
 // 初期化処理
@@ -63,7 +40,7 @@ function initMap() {
         navigator.geolocation.getCurrentPosition(
             (position) => resolve(position),
             (error) => reject(error),
-            GEOLOCATION_OPTIONS
+            CONFIG.geolocation
         );
     });
 
@@ -85,8 +62,8 @@ function initMap() {
             // 位置情報取得失敗: デフォルト位置で地図を初期化
             console.log('位置情報取得失敗、デフォルト位置で地図を初期化しました:', error.message);
             map = L.map('map').setView(
-                [DEFAULT_CENTER.lat, DEFAULT_CENTER.lng],
-                DEFAULT_CENTER.zoom
+                [CONFIG.map.defaultCenter.lat, CONFIG.map.defaultCenter.lng],
+                CONFIG.map.defaultCenter.zoom
             );
         })
         .finally(() => {
@@ -250,7 +227,7 @@ function showCurrentLocation() {
             showNotification(errorMessage, 'error');
             showLoading(false); // ローディング表示を終了
         },
-        GEOLOCATION_OPTIONS
+        CONFIG.geolocation
     );
 }
 
@@ -265,7 +242,7 @@ function refreshData() {
 // BODIK APIからデータ取得
 // ========================================
 function loadDataForCurrentCategory() {
-    const config = API_CONFIG[currentCategory];
+    const config = CONFIG.api.endpoints[currentCategory];
     if (!config) {
         console.error(`未対応のカテゴリ: ${currentCategory}`);
         return;
@@ -284,9 +261,7 @@ function loadDataForCurrentCategory() {
     lastLoadedCenter = { lat: lat, lng: lon };
 
     // APIのURLを構築
-    const distance = 20000; // 検索半径（メートル）
-    const maxResults = 100; // 最大取得件数
-    const apiUrl = `${BODIK_API_SERVER}/${config.endpoint}?select_type=geometry&lat=${lat}&lon=${lon}&distance=${distance}&maxResults=${maxResults}`;
+    const apiUrl = `${CONFIG.api.baseUrl}/${config.endpoint}?select_type=geometry&lat=${lat}&lon=${lon}&distance=${CONFIG.api.searchRadius}&maxResults=${CONFIG.api.maxResults}`;
 
     console.log(`API呼び出し: ${apiUrl}`);
 
@@ -399,7 +374,7 @@ function displayMarkers(features) {
 // ========================================
 function createMarkerIcon(category) {
     // カテゴリに応じた色を取得（デフォルトは青）
-    const color = MARKER_COLORS[category] || '#3498db';
+    const color = CONFIG.ui.markerColors[category] || '#3498db';
 
     // Leaflet用のカスタムアイコンを作成
     // SVGを使って色付きマーカーを生成
@@ -419,93 +394,4 @@ function createMarkerIcon(category) {
     });
 }
 
-// ========================================
-// 通知表示
-// ========================================
-function showNotification(message, type = 'info') {
-    // 簡易的な通知表示（コンソールログ）
-    console.log(`[${type.toUpperCase()}] ${message}`);
 
-    // TODO: より見やすい通知UIを追加する場合はここに実装
-}
-
-// ========================================
-// ローディング表示の制御
-// ========================================
-function showLoading(show) {
-    const loadingElement = document.getElementById('loading');
-    if (loadingElement) {
-        if (show) {
-            loadingElement.classList.remove('hidden');
-        } else {
-            loadingElement.classList.add('hidden');
-        }
-    }
-}
-
-// ========================================
-// マーカーのクリア
-// ========================================
-function clearMarkers() {
-    markers.forEach(marker => {
-        map.removeLayer(marker);
-    });
-    markers = [];
-}
-
-// ========================================
-// 現在地マーカーのクリア
-// ========================================
-function clearCurrentLocationMarkers() {
-    if (window.currentLocationMarkers) {
-        window.currentLocationMarkers.forEach(marker => {
-            map.removeLayer(marker);
-        });
-        window.currentLocationMarkers = [];
-    }
-}
-function addTestMarkers() {
-    // 宇都宮市内の3箇所にテストマーカーを追加
-    const testLocations = [
-        { lat: 36.5658, lng: 139.8836, name: 'テスト地点1', description: '宇都宮市中心部' },
-        { lat: 36.5558, lng: 139.8936, name: 'テスト地点2', description: '宇都宮市東部' },
-        { lat: 36.5758, lng: 139.8736, name: 'テスト地点3', description: '宇都宮市西部' }
-    ];
-
-    clearMarkers();
-
-    testLocations.forEach(location => {
-        const marker = L.marker([location.lat, location.lng])
-            .addTo(map)
-            .bindPopup(`
-                <h3>${location.name}</h3>
-                <p>${location.description}</p>
-            `);
-        markers.push(marker);
-    });
-
-    console.log(`${testLocations.length}個のテストマーカーを追加しました`);
-}
-
-// デバッグ用：コンソールからテストマーカーを追加できるようにする
-window.addTestMarkers = addTestMarkers;
-
-// ========================================
-// 2地点間の距離を計算（単位：メートル）
-// ========================================
-function calculateDistance(lat1, lng1, lat2, lng2) {
-    // Haversine式で2地点間の距離を計算
-    const R = 6371e3; // 地球の半径（メートル）
-    const φ1 = lat1 * Math.PI / 180;
-    const φ2 = lat2 * Math.PI / 180;
-    const Δφ = (lat2 - lat1) * Math.PI / 180;
-    const Δλ = (lng2 - lng1) * Math.PI / 180;
-
-    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-        Math.cos(φ1) * Math.cos(φ2) *
-        Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-    const distance = R * c; // メートル単位
-    return distance;
-}
