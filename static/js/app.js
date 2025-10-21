@@ -4,7 +4,7 @@
 // ========================================
 
 import { CONFIG } from './config.js';
-import { showNotification, showLoading, clearMarkers } from './utils.js';
+import { showNotification, showLoading } from './utils.js';
 import { map, initMap, setupMapLayers } from './map-core.js';
 import { addCurrentLocationMarker, showCurrentLocation } from './location.js';
 import { displayMarkers } from './markers.js';

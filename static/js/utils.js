@@ -27,21 +27,6 @@ export function showLoading(show) {
 }
 
 // ========================================
-// マーカーのクリア
-// ========================================
-export function clearMarkers() {
-    // グローバル変数markersが必要
-    if (typeof markers !== 'undefined') {
-        markers.forEach(marker => {
-            if (typeof map !== 'undefined' && map.removeLayer) {
-                map.removeLayer(marker);
-            }
-        });
-        markers = [];
-    }
-}
-
-// ========================================
 // 現在地マーカーのクリア
 // ========================================
 export function clearCurrentLocationMarkers() {
@@ -66,7 +51,13 @@ export function addTestMarkers() {
         { lat: 36.5758, lng: 139.8736, name: 'テスト地点3', description: '宇都宮市西部' }
     ];
 
-    clearMarkers();
+    // 既存のマーカーをクリア
+    markers.forEach(marker => {
+        if (map && marker) {
+            map.removeLayer(marker);
+        }
+    });
+    markers.length = 0;
 
     testLocations.forEach(location => {
         if (typeof L !== 'undefined' && typeof map !== 'undefined') {

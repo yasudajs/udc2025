@@ -4,7 +4,6 @@
 // ========================================
 
 import { CONFIG } from './config.js';
-import { clearMarkers } from './utils.js';
 import { setPopupOpeningState } from './map-core.js';
 
 // ========================================
@@ -12,11 +11,15 @@ import { setPopupOpeningState } from './map-core.js';
 // ========================================
 export function displayMarkers(features, currentCategoryParam, mapParam, markersArray) {
     // 既存のマーカーをクリア
-    clearMarkers();
+    markersArray.forEach(marker => {
+        if (mapParam && marker) {
+            mapParam.removeLayer(marker);
+        }
+    });
+    markersArray.length = 0;
 
     // featuresの型チェックを追加
     if (!features || !Array.isArray(features)) {
-        console.warn('featuresが配列ではありません:', features);
         return;
     }
 

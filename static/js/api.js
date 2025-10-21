@@ -4,7 +4,7 @@
 // ========================================
 
 import { CONFIG } from './config.js';
-import { showNotification, showLoading, clearMarkers } from './utils.js';
+import { showNotification, showLoading } from './utils.js';
 
 // ========================================
 // BODIK APIからデータ取得
@@ -50,18 +50,18 @@ export function loadDataForCurrentCategory(displayMarkersCallback, currentCatego
                     showNotification(`${config.name}を${features.length}件表示しました`, 'success');
                 } else {
                     console.warn('featuresが見つかりません');
-                    clearMarkers();
+                    displayMarkersCallback([]);
                     showNotification(`${config.name}のデータが見つかりませんでした`, 'warning');
                 }
             } else {
                 console.warn('resultsetsが見つかりません', data);
-                clearMarkers();
+                displayMarkersCallback([]);
                 showNotification(`${config.name}のデータ取得に失敗しました`, 'error');
             }
         })
         .catch(error => {
             console.error('APIエラー:', error);
-            clearMarkers();
+            displayMarkersCallback([]);
             showNotification(`${config.name}のデータ取得に失敗しました: ${error.message}`, 'error');
         })
         .finally(() => {
