@@ -46,7 +46,7 @@ export function displayMarkers(features, currentCategoryParam, mapParam, markers
             const marker = L.marker([lat, lon], { icon: markerIcon }).addTo(mapParam);
 
             // ポップアップ内容を作成
-            let popupContent = `<h3>${properties['name'] || '名称不明'}</h3>`;
+            let popupContent = `<h3>${properties['name'] || 'データ未登録'}</h3>`;
 
             // 住所があれば追加
             if (properties['address']) {
