@@ -47,11 +47,9 @@ export function displayMarkers(features, currentCategoryParam, mapParam, markers
 
             // ポップアップ内容を作成
             let popupContent = `<h3>${properties['name'] || 'データ未登録'}</h3>`;
-
-            // 住所があれば追加
-            if (properties['address']) {
-                popupContent += `<p>📍 ${properties['address']}</p>`;
-            }
+            popupContent += `<p>📍 ${properties['address'] || 'データ未登録'}</p>`;
+            popupContent += `<p>📞 ${properties['tel'] || 'データ未登録'}</p>`;
+            popupContent += `<p>⏰ ${properties['open_hours'] || 'データ未登録'}</p>`;
 
             // その他の情報があれば追加
             if (properties['remarks']) {
