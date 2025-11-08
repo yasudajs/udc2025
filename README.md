@@ -5,7 +5,7 @@ FlaskベースのWebアプリケーション
 ## セットアップ
 
 ### 前提条件
-- Python 3.8以上
+- Python 3.7以上
 - pip
 
 ### インストール手順
@@ -18,11 +18,11 @@ cd udc2025
 
 2. 仮想環境の作成と有効化
 ```bash
-python -m venv venv
+python -m venv venv37
 # Windows
-venv\Scripts\activate
+venv37\Scripts\activate
 # Mac/Linux
-source venv/bin/activate
+source venv37/bin/activate
 ```
 
 3. 依存パッケージのインストール
