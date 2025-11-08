@@ -42,6 +42,9 @@ instance/
 *.swo
 *~
 
+# GitHub
+.github/
+
 # OS
 .DS_Store
 Thumbs.db
