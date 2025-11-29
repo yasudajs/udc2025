@@ -56,6 +56,10 @@ export function displayMarkers(features, currentCategoryParam, mapParam, markers
                 popupContent += `<p>${properties['remarks']}</p>`;
             }
 
+            // Googleマップで経路案内を開くリンクを追加
+            const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`;
+            popupContent += `<p><a href="${googleMapsUrl}" target="_blank" rel="noopener noreferrer" style="color: #4285f4; text-decoration: none; font-weight: bold;">🗺️ ここへ行く</a></p>`;
+
             // ポップアップを設定
             const popup = L.popup().setContent(popupContent);
             marker.bindPopup(popup);
