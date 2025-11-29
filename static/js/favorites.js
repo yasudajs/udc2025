@@ -188,6 +188,53 @@ export function removeFavorite(resourceId, options = {}) {
 }
 
 // ========================================
+// 並び順を更新
+// ========================================
+export function reorderFavorites(orderedResourceIds) {
+    if (!Array.isArray(orderedResourceIds) || orderedResourceIds.length === 0) {
+        return false;
+    }
+
+    const favorites = initFavorites();
+    if (favorites.length === 0) {
+        return false;
+    }
+
+    const idToFavorite = new Map();
+    favorites.forEach(fav => {
+        idToFavorite.set(fav.resource_id, fav);
+    });
+
+    const used = new Set();
+    const newFavorites = [];
+
+    orderedResourceIds.forEach(id => {
+        const fav = idToFavorite.get(id);
+        if (fav && !used.has(id)) {
+            newFavorites.push(fav);
+            used.add(id);
+        }
+    });
+
+    favorites.forEach(fav => {
+        if (!used.has(fav.resource_id)) {
+            newFavorites.push(fav);
+        }
+    });
+
+    if (newFavorites.length !== favorites.length) {
+        return false;
+    }
+
+    const isSameOrder = newFavorites.every((fav, index) => fav.resource_id === favorites[index].resource_id);
+    if (isSameOrder) {
+        return true;
+    }
+
+    return saveFavorites(newFavorites);
+}
+
+// ========================================
 // お気に入りか判定
 // ========================================
 export function isFavorite(resourceId, category, lat, lon, favoritesCache) {

@@ -6,7 +6,7 @@
 import { showCurrentLocation } from './location.js';
 import { CONFIG } from './config.js';
 import { calculateDistance } from './utils.js';
-import { getAllFavorites, removeFavorite } from './favorites.js';
+import { getAllFavorites, removeFavorite, reorderFavorites } from './favorites.js';
 
 // ========================================
 // ボタンスタイル設定関数
@@ -214,10 +214,17 @@ function renderFavoritesList() {
         toilet: '公衆トイレ'
     };
 
+    // ドラッグアンドドロップ用の状態管理
+    let dragSourceId = null;
+    let dropHandled = false;
+
     // お気に入いアイテムを作成
-    favorites.forEach(favorite => {
+    favorites.forEach((favorite, index) => {
         const item = document.createElement('div');
         item.className = 'favorites-item';
+        item.dataset.resourceId = favorite.resource_id;
+        item.dataset.index = String(index);
+        item.setAttribute('draggable', 'true');
 
         const nameDiv = document.createElement('div');
         nameDiv.className = 'favorites-item-name';
@@ -235,8 +242,81 @@ function renderFavoritesList() {
         item.appendChild(addressDiv);
         item.appendChild(categorySpan);
 
+        item.addEventListener('dragstart', function (event) {
+            dragSourceId = favorite.resource_id;
+            item.classList.add('dragging');
+            if (event.dataTransfer) {
+                event.dataTransfer.effectAllowed = 'move';
+                event.dataTransfer.setData('text/plain', favorite.resource_id ?? '');
+            }
+        });
+
+        item.addEventListener('dragend', function () {
+            item.classList.remove('dragging');
+            favoritesList.querySelectorAll('.drag-over').forEach(element => {
+                element.classList.remove('drag-over');
+            });
+            dragSourceId = null;
+        });
+
+        item.addEventListener('dragover', function (event) {
+            event.preventDefault();
+            item.classList.add('drag-over');
+            if (event.dataTransfer) {
+                event.dataTransfer.dropEffect = 'move';
+            }
+        });
+
+        item.addEventListener('dragleave', function () {
+            item.classList.remove('drag-over');
+        });
+
+        item.addEventListener('drop', function (event) {
+            event.preventDefault();
+            item.classList.remove('drag-over');
+
+            if (!dragSourceId) {
+                return;
+            }
+
+            const targetId = favorite.resource_id;
+            if (dragSourceId === targetId) {
+                dragSourceId = null;
+                return;
+            }
+
+            const currentFavorites = getAllFavorites();
+            const fromIndex = currentFavorites.findIndex(fav => fav.resource_id === dragSourceId);
+            const toIndex = currentFavorites.findIndex(fav => fav.resource_id === targetId);
+
+            if (fromIndex === -1 || toIndex === -1) {
+                dragSourceId = null;
+                return;
+            }
+
+            const updated = [...currentFavorites];
+            const [movedFavorite] = updated.splice(fromIndex, 1);
+            updated.splice(toIndex, 0, movedFavorite);
+            const orderedIds = updated.map(fav => fav.resource_id);
+
+            if (reorderFavorites(orderedIds)) {
+                dropHandled = true;
+                setTimeout(() => {
+                    dropHandled = false;
+                }, 0);
+                setTimeout(() => {
+                    renderFavoritesList();
+                }, 0);
+            }
+
+            dragSourceId = null;
+        });
+
         // クリック時にその地点に地図を移動
         item.addEventListener('click', function () {
+            if (dropHandled) {
+                return;
+            }
             console.log('お気に入いアイテムをクリック:', favorite.name, favorite.lat, favorite.lon);
             console.log('カテゴリ:', favorite.category);
             

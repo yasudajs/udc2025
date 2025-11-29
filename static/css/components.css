@@ -359,6 +359,21 @@
     transition: all 0.2s ease;
 }
 
+.favorites-item[draggable="true"] {
+        cursor: grab;
+}
+
+.favorites-item.dragging {
+        opacity: 0.6;
+        cursor: grabbing;
+}
+
+.favorites-item.drag-over {
+        border-color: #667eea;
+        border-style: dashed;
+        background: #eef1ff;
+}
+
 .favorites-item:hover {
     background: #fff3e0;
     border-color: #ff9800;
