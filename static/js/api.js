@@ -9,7 +9,13 @@ import { showNotification, showLoading } from './utils.js';
 // ========================================
 // BODIK APIからデータ取得
 // ========================================
-export function loadDataForCurrentCategory(displayMarkersCallback, currentCategoryParam, mapParam, lastLoadedCenterRef) {
+export function loadDataForCurrentCategory(
+    displayMarkersCallback,
+    currentCategoryParam,
+    mapParam,
+    lastLoadedCenterRef,
+    options = {}
+) {
     const config = CONFIG.api.endpoints[currentCategoryParam];
     if (!config) {
         console.error(`未対応のカテゴリ: ${currentCategoryParam}`);
@@ -21,9 +27,31 @@ export function loadDataForCurrentCategory(displayMarkersCallback, currentCatego
     showNotification(`${config.name}のデータを読み込み中...`);
 
     // 地図の中心座標を取得
-    const center = mapParam.getCenter();
-    const lat = center.lat;
-    const lon = center.lng;
+    let lat;
+    let lon;
+
+    const customCenter = options.center;
+
+    if (customCenter !== undefined) {
+        const customLat = Number(customCenter.lat);
+        const customLon = Number(customCenter.lon);
+        if (Number.isFinite(customLat) && Number.isFinite(customLon)) {
+            lat = customLat;
+            lon = customLon;
+        }
+    }
+
+    if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+        if (mapParam && typeof mapParam.getCenter === 'function') {
+            const center = mapParam.getCenter();
+            lat = center.lat;
+            lon = center.lng;
+        } else {
+            // 地図が取得できない場合はデフォルト座標を利用
+            lat = CONFIG.map.defaultCenter.lat;
+            lon = CONFIG.map.defaultCenter.lng;
+        }
+    }
 
     // 最後にデータを読み込んだ位置を記録
     lastLoadedCenterRef.current = { lat: lat, lng: lon };

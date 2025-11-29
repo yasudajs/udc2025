@@ -68,13 +68,14 @@ function initApp() {
 // ========================================
 // BODIK APIからデータ取得（ラッパー関数）
 // ========================================
-function handleLoadDataForCurrentCategory() {
+function handleLoadDataForCurrentCategory(options = {}) {
     const lastLoadedCenterRef = { current: lastLoadedCenter };
     loadDataForCurrentCategory(
         (features) => displayMarkers(features, currentCategoryRef.current, map, markers),
         currentCategoryRef.current,
         map,
-        lastLoadedCenterRef
+        lastLoadedCenterRef,
+        options
     );
     lastLoadedCenter = lastLoadedCenterRef.current;
 }

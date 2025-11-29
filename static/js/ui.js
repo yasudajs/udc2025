@@ -41,7 +41,10 @@ export function setupEventListeners(currentCategoryRef, loadDataForCurrentCatego
     window.currentMapInstance = map;
     
     // カテゴリ切り替え用のコールバックを保存
-    window.loadDataCallback = loadDataForCurrentCategoryCallback;
+    // お気に入り選択時などに中心座標を差し替えられるようオプションを受け取る
+    window.loadDataCallback = function loadDataWithOptionalCenter(options = {}) {
+        loadDataForCurrentCategoryCallback(options);
+    };
     window.currentCategoryRef = currentCategoryRef;
 
     // カテゴリボタンのクリックイベント
@@ -345,7 +348,14 @@ function renderFavoritesList() {
                 
                 // 選択したカテゴリのデータを読み込む
                 if (window.loadDataCallback) {
-                    window.loadDataCallback();
+                    const targetLat = Number(favorite.lat);
+                    const targetLon = Number(favorite.lon);
+                    window.loadDataCallback({
+                        center: {
+                            lat: Number.isFinite(targetLat) ? targetLat : favorite.lat,
+                            lon: Number.isFinite(targetLon) ? targetLon : favorite.lon
+                        }
+                    });
                 }
                 
                 // お気に入りマーカーを表示
