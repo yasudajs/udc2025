@@ -43,6 +43,7 @@ export function displayMarkers(features, currentCategoryParam, mapParam, markers
             const lat = coordinates[1];
             const lon = coordinates[0];
             const resourceId = properties['resource_id'];
+            const buttonId = `fav-${currentCategoryParam}-${lat.toFixed(8)}-${lon.toFixed(8)}`.replace(/[^a-zA-Z0-9_-]/g, '_');
 
             // マーカーを作成（カスタムアイコンを使用）
             const marker = L.marker([lat, lon], { icon: markerIcon }).addTo(mapParam);
@@ -67,13 +68,13 @@ export function displayMarkers(features, currentCategoryParam, mapParam, markers
             popupHTML += `<p><a href="${googleMapsUrl}" target="_blank" rel="noopener noreferrer" style="color: #4285f4; text-decoration: none; font-weight: bold;">🗺️ ここへ行く</a></p>`;
 
             // お気に入りボタンを追加
-            const isFav = isFavorite(resourceId);
+            const isFav = isFavorite(resourceId, currentCategoryParam, lat, lon);
             const favButtonClass = isFav ? 'favorite-btn favorite-active' : 'favorite-btn';
             const favButtonText = isFav ? '★ お気に入り済み' : '☆ お気に入りに追加';
             const favButtonBgColor = isFav ? '#ffe082' : '#f5f5f5';
             const favButtonTextColor = isFav ? '#ff6f00' : '#333';
             
-            popupHTML += `<p><button id="fav-${resourceId}" class="${favButtonClass}" style="cursor: pointer; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: ${favButtonBgColor}; color: ${favButtonTextColor}; font-weight: bold; width: 100%;">${favButtonText}</button></p>`;
+            popupHTML += `<p><button id="${buttonId}" class="${favButtonClass}" style="cursor: pointer; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; background-color: ${favButtonBgColor}; color: ${favButtonTextColor}; font-weight: bold; width: 100%;">${favButtonText}</button></p>`;
 
             popupDiv.innerHTML = popupHTML;
 
@@ -97,28 +98,50 @@ export function displayMarkers(features, currentCategoryParam, mapParam, markers
                 // ポップアップコンテナ内のボタンのみを対象
                 const popupContainer = marker.getPopup().getElement();
                 if (popupContainer) {
-                    const favButton = popupContainer.querySelector('button[id^="fav-"]');
+                    // 正確に該当するボタンを取得（IDで完全一致）
+                    const favButton = popupContainer.querySelector(`#${buttonId}`);
                     if (favButton) {
                         console.log('お気に入いボタンを見つけました:', resourceId);
-                        // 既存のイベントリスナーをクリア
-                        favButton.onclick = null;
+                        
+                        // ポップアップ表示時に最新のお気に入い状態を反映
+                        const currentIsFav = isFavorite(resourceId, currentCategoryParam, lat, lon);
+                        console.log(`${resourceId}のお気に入い状態:`, currentIsFav);
+                        
+                        if (currentIsFav) {
+                            favButton.textContent = '★ お気に入り済み';
+                            favButton.style.backgroundColor = '#ffe082';
+                            favButton.style.color = '#ff6f00';
+                            favButton.style.borderColor = '#ff6f00';
+                            favButton.classList.add('favorite-active');
+                        } else {
+                            favButton.textContent = '☆ お気に入りに追加';
+                            favButton.style.backgroundColor = '#f5f5f5';
+                            favButton.style.color = '#333';
+                            favButton.style.borderColor = '#ccc';
+                            favButton.classList.remove('favorite-active');
+                        }
+                        
+                        // 既存のイベントリスナーをクリア（重複登録を防止）
+                        // addEventListener は複数登録されるため、まず親要素を置き換え
+                        const newButton = favButton.cloneNode(true);
+                        favButton.parentNode.replaceChild(newButton, favButton);
                         
                         // 新しいイベントリスナーを追加
-                        favButton.addEventListener('click', function (e) {
+                        newButton.addEventListener('click', function (e) {
                             e.preventDefault();
                             e.stopPropagation();
-                            console.log('お気に入いボタンがクリックされました:', resourceId);
+                            console.log('お気に入いボタンがクリックされました:', resourceId, 'ボタン:', newButton);
                             handleFavoriteButtonClick(
                                 resourceId,
                                 currentCategoryParam,
                                 properties,
                                 lat,
                                 lon,
-                                favButton
+                                newButton
                             );
                         });
                     } else {
-                        console.warn('お気に入いボタンが見つかりません');
+                        console.warn('お気に入いボタンが見つかりません:', buttonId);
                     }
                 }
             });
@@ -212,7 +235,12 @@ export function displayFavoritesMarkers(features, markersArray, mapParam) {
                             e.preventDefault();
                             e.stopPropagation();
                             if (confirm('このお気に入いを削除しますか？')) {
-                                removeFavorite(resourceId);
+                                removeFavorite(resourceId, {
+                                    category,
+                                    lat,
+                                    lon,
+                                    originalResourceId: properties['original_resource_id']
+                                });
                                 mapParam.removeLayer(marker);
                                 const index = markersArray.indexOf(marker);
                                 if (index > -1) {
@@ -266,11 +294,14 @@ export function createMarkerIcon(category) {
 // ========================================
 function handleFavoriteButtonClick(resourceId, category, properties, lat, lon, button) {
     console.log('お気に入いボタンクリック:', resourceId);
-    const isFav = isFavorite(resourceId);
+    console.log('ボタン要素:', button);
+    console.log('ボタンID:', button.id);
+
+    const isFav = isFavorite(resourceId, category, lat, lon);
 
     if (isFav) {
         // お気に入りから削除
-        if (removeFavorite(resourceId)) {
+        if (removeFavorite(resourceId, { category, lat, lon })) {
             button.classList.remove('favorite-active');
             button.textContent = '☆ お気に入りに追加';
             button.style.backgroundColor = '#f5f5f5';

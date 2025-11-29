@@ -351,6 +351,7 @@ function displayFavoritesOnMap(favorites) {
         type: 'Feature',
         properties: {
             resource_id: fav.resource_id,
+            original_resource_id: fav.original_resource_id ?? null,
             category: fav.category,
             name: fav.name,
             address: fav.address,
