@@ -138,20 +138,6 @@ export function displayMarkers(features, currentCategoryParam, mapParam, markers
 // お気に入いマーカーを地図に表示
 // ========================================
 export function displayFavoritesMarkers(features, markersArray, mapParam) {
-    // カテゴリに応じたマーカーアイコンを作成（お気に入いは赤色で統一）
-    const markerIcon = L.divIcon({
-        html: `
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 36" width="30" height="45">
-                <path fill="#ff1744" stroke="white" stroke-width="2" d="M12 0C7.6 0 4 3.6 4 8c0 5.4 8 16 8 16s8-10.6 8-16c0-4.4-3.6-8-8-8z"/>
-                <circle fill="white" cx="12" cy="8" r="3"/>
-            </svg>
-        `,
-        className: 'custom-marker-icon',
-        iconSize: [30, 45],
-        iconAnchor: [15, 45],
-        popupAnchor: [0, -45]
-    });
-
     // featuresの型チェック
     if (!features || !Array.isArray(features)) {
         return;
@@ -172,6 +158,10 @@ export function displayFavoritesMarkers(features, markersArray, mapParam) {
             const lat = coordinates[1];
             const lon = coordinates[0];
             const resourceId = properties['resource_id'];
+            const category = properties['category'] || 'aed';  // デフォルトはaed
+
+            // カテゴリに応じたマーカーアイコンを作成
+            const markerIcon = createMarkerIcon(category);
 
             // マーカーを作成
             const marker = L.marker([lat, lon], { icon: markerIcon }).addTo(mapParam);

@@ -39,6 +39,10 @@ export function setupEventListeners(currentCategoryRef, loadDataForCurrentCatego
     // グローバルマップインスタンスを保存
     currentMap = map;
     window.currentMapInstance = map;
+    
+    // カテゴリ切り替え用のコールバックを保存
+    window.loadDataCallback = loadDataForCurrentCategoryCallback;
+    window.currentCategoryRef = currentCategoryRef;
 
     // カテゴリボタンのクリックイベント
     const categoryButtons = document.querySelectorAll('.category-btn');
@@ -66,6 +70,12 @@ export function setupEventListeners(currentCategoryRef, loadDataForCurrentCatego
             // カテゴリの切り替え
             currentCategoryRef.current = category;
             console.log(`カテゴリを切り替え: ${category}`);
+
+            // お気に入りマーカーをクリア
+            clearFavoriteMarkers();
+            
+            // お気に入りメニューを非表示にする
+            hideFavoritesMenu();
 
             // データの再読み込み
             loadDataForCurrentCategoryCallback();
@@ -158,6 +168,25 @@ function hideFavoritesMenu() {
 }
 
 // ========================================
+// お気に入いマーカーをクリア
+// ========================================
+function clearFavoriteMarkers() {
+    const map = currentMap || window.currentMapInstance;
+    if (!map || !window.favMarkers) {
+        return;
+    }
+
+    // すべてのお気に入いマーカーを地図から削除
+    window.favMarkers.forEach(marker => {
+        if (marker) {
+            map.removeLayer(marker);
+        }
+    });
+    window.favMarkers.length = 0;
+    console.log('お気に入いマーカーをクリアしました');
+}
+
+// ========================================
 // お気に入いリストを描画
 // ========================================
 function renderFavoritesList() {
@@ -209,18 +238,49 @@ function renderFavoritesList() {
         // クリック時にその地点に地図を移動
         item.addEventListener('click', function () {
             console.log('お気に入いアイテムをクリック:', favorite.name, favorite.lat, favorite.lon);
-            console.log('currentMap:', currentMap);
-            console.log('window.currentMapInstance:', window.currentMapInstance);
+            console.log('カテゴリ:', favorite.category);
             
             const map = currentMap || window.currentMapInstance;
-            console.log('使用するマップ:', map);
             
             if (map) {
-                map.setView([favorite.lat, favorite.lon], 16);
-                console.log('地図を移動しました');
+                // 選択したピンのカテゴリに切り替え
+                if (window.currentCategoryRef && window.currentCategoryRef.current !== favorite.category) {
+                    window.currentCategoryRef.current = favorite.category;
+                    console.log(`カテゴリを切り替え: ${favorite.category}`);
+                    
+                    // カテゴリボタンのスタイルを更新
+                    const categoryButtons = document.querySelectorAll('.category-btn');
+                    categoryButtons.forEach(btn => {
+                        const cat = btn.dataset.category;
+                        setDefaultButtonStyle(btn, cat);
+                        btn.classList.remove('active');
+                    });
+                    
+                    const activeButton = document.querySelector(`.category-btn[data-category="${favorite.category}"]`);
+                    if (activeButton) {
+                        activeButton.classList.add('active');
+                        setActiveButtonStyle(activeButton, favorite.category);
+                    }
+                }
+                
+                // 選択したカテゴリのデータを読み込む
+                if (window.loadDataCallback) {
+                    window.loadDataCallback();
+                }
                 
                 // お気に入りマーカーを表示
                 displayFavoritesOnMap([favorite]);
+                
+                // ポップアップが表示された後、ピンが画面中央になるように移動
+                setTimeout(() => {
+                    // ポップアップの高さ分を考慮してオフセット
+                    const popupHeight = 250; // ポップアップの推定高さ
+                    const panAmount = popupHeight / 2;
+                    map.setView([favorite.lat, favorite.lon], 16);
+                    map.panBy([0, panAmount], { animate: false });
+                }, 150);
+                
+                console.log('地図を移動しました');
                 
                 hideFavoritesMenu();
                 // メニューを閉じる
@@ -291,6 +351,7 @@ function displayFavoritesOnMap(favorites) {
         type: 'Feature',
         properties: {
             resource_id: fav.resource_id,
+            category: fav.category,
             name: fav.name,
             address: fav.address,
             telephoneNumber: fav.telephoneNumber,
