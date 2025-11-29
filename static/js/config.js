@@ -40,6 +40,13 @@ export const CONFIG = {
         reloadDistanceThreshold: 2000  // 地図移動時のデータ再読み込み閾値（メートル）
     },
 
+    // お気に入り設定
+    favorites: {
+        enabled: true,              // お気に入い機能の有効/無効
+        maxCount: 100,              // 最大保存数
+        storageKey: 'udc2025_favorites'  // localStorageのキー
+    },
+
     // 位置情報設定
     geolocation: {
         timeout: 5000,         // 5秒タイムアウト

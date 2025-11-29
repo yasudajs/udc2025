@@ -24,16 +24,28 @@
     <button id="menu-toggle" class="menu-toggle" aria-label="メニューを開く">&#9776;</button>
     <nav id="side-menu" class="side-menu">
         <button id="menu-close" class="menu-close" aria-label="メニューを閉じる">&times;</button>
-        <div class="category-buttons">
-            <button class="category-btn active" data-category="aed">AED</button>
-            <button class="category-btn" data-category="hospital">医療機関</button>
-            <button class="category-btn" data-category="freewifi">公衆無線LAN</button>
-            <button class="category-btn" data-category="evacuation">指定緊急避難場所</button>
-            <button class="category-btn" data-category="toilet">公衆トイレ</button>
+        <div id="menu-content" class="menu-content">
+            <div class="category-buttons">
+                <button class="category-btn active" data-category="aed">AED</button>
+                <button class="category-btn" data-category="hospital">医療機関</button>
+                <button class="category-btn" data-category="freewifi">公衆無線LAN</button>
+                <button class="category-btn" data-category="evacuation">指定緊急避難場所</button>
+                <button class="category-btn" data-category="toilet">公衆トイレ</button>
+            </div>
+            <div class="control-buttons">
+                <button id="favorites-btn" class="control-btn">❤️ お気に入り</button>
+                <button id="current-location-btn" class="control-btn">📍 現在地を表示</button>
+                <button id="refresh-btn" class="control-btn">🔄 更新</button>
+            </div>
         </div>
-        <div class="control-buttons">
-            <button id="current-location-btn" class="control-btn">📍 現在地を表示</button>
-            <button id="refresh-btn" class="control-btn">🔄 更新</button>
+        <div id="favorites-list-container" class="favorites-list-container hidden">
+            <div class="favorites-list-header">
+                <h3>❤️ お気に入り一覧</h3>
+                <button id="favorites-back-btn" class="favorites-back-btn">← 戻る</button>
+            </div>
+            <div id="favorites-list" class="favorites-list">
+                <!-- リストがここに表示される -->
+            </div>
         </div>
     </nav>
 
@@ -75,29 +87,75 @@
         });
         menuClose.addEventListener('click', () => {
             sideMenu.classList.remove('open');
+            // メニュー閉じる時にお気に入りリストもリセット
+            const menuContent = document.getElementById('menu-content');
+            const favoritesListContainer = document.getElementById('favorites-list-container');
+            if (menuContent && favoritesListContainer) {
+                menuContent.classList.remove('hidden');
+                favoritesListContainer.classList.add('hidden');
+            }
         });
         // メニュー外クリックで閉じる
         document.addEventListener('click', (e) => {
             if (sideMenu.classList.contains('open') && !sideMenu.contains(e.target) && e.target !== menuToggle) {
                 sideMenu.classList.remove('open');
+                // メニュー閉じる時にお気に入りリストもリセット
+                const menuContent = document.getElementById('menu-content');
+                const favoritesListContainer = document.getElementById('favorites-list-container');
+                if (menuContent && favoritesListContainer) {
+                    menuContent.classList.remove('hidden');
+                    favoritesListContainer.classList.add('hidden');
+                }
             }
         });
 
-        // カテゴリボタンと操作ボタンをクリックしたらメニューを閉じる
+        // カテゴリボタンをクリックしたらメニューを閉じる
         const categoryButtons = document.querySelectorAll('.category-btn');
-        const controlButtons = document.querySelectorAll('.control-btn');
-
         categoryButtons.forEach(btn => {
             btn.addEventListener('click', () => {
                 sideMenu.classList.remove('open');
+                // メニュー閉じる時にお気に入りリストもリセット
+                const menuContent = document.getElementById('menu-content');
+                const favoritesListContainer = document.getElementById('favorites-list-container');
+                if (menuContent && favoritesListContainer) {
+                    menuContent.classList.remove('hidden');
+                    favoritesListContainer.classList.add('hidden');
+                }
             });
         });
 
-        controlButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
+        // 現在地と更新ボタンをクリックしたらメニューを閉じる
+        const currentLocationBtn = document.getElementById('current-location-btn');
+        const refreshBtn = document.getElementById('refresh-btn');
+        
+        if (currentLocationBtn) {
+            currentLocationBtn.addEventListener('click', () => {
                 sideMenu.classList.remove('open');
+                // メニュー閉じる時にお気に入りリストもリセット
+                const menuContent = document.getElementById('menu-content');
+                const favoritesListContainer = document.getElementById('favorites-list-container');
+                if (menuContent && favoritesListContainer) {
+                    menuContent.classList.remove('hidden');
+                    favoritesListContainer.classList.add('hidden');
+                }
             });
-        });
+        }
+        
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', () => {
+                sideMenu.classList.remove('open');
+                // メニュー閉じる時にお気に入りリストもリセット
+                const menuContent = document.getElementById('menu-content');
+                const favoritesListContainer = document.getElementById('favorites-list-container');
+                if (menuContent && favoritesListContainer) {
+                    menuContent.classList.remove('hidden');
+                    favoritesListContainer.classList.add('hidden');
+                }
+            });
+        }
+
+        // お気に入りボタンはメニューを閉じない（中身を切り替える）
+        // UIモジュールで処理される
     </script>
 
     <!-- Custom JS -->

@@ -10,6 +10,7 @@ import { addCurrentLocationMarker, showCurrentLocation } from './location.js';
 import { displayMarkers } from './markers.js';
 import { loadDataForCurrentCategory } from './api.js';
 import { setupEventListeners } from './ui.js';
+import { initFavorites } from './favorites.js';
 
 // ========================================
 // グローバル変数
@@ -20,6 +21,9 @@ let lastLoadedCenter = null; // 最後にデータを読み込んだ時の中心
 
 // 参照オブジェクト（UIモジュール用）
 const currentCategoryRef = { current: currentCategory };
+
+// グローバルマップインスタンス（UI.jsで使用）
+window.currentMapInstance = map;
 
 // ========================================
 // アプリケーション初期化
@@ -34,6 +38,15 @@ document.addEventListener('DOMContentLoaded', function () {
 function initApp() {
     try {
         console.log('UDC2025 アプリケーションを初期化中...');
+
+        // グローバルマップインスタンスを更新
+        window.currentMapInstance = map;
+
+        // お気に入い機能の初期化
+        if (CONFIG.favorites.enabled) {
+            initFavorites();
+            console.log('お気に入い機能が有効になっています');
+        }
 
         // 地図の初期化
         initMap();
