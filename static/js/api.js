@@ -70,10 +70,21 @@ export function loadDataForCurrentCategory(
             return response.json();
         })
         .then(data => {
+            // デバッグ用：BODIK APIレスポンスをコンソールに出力
+            console.log(`=== ${config.name} API レスポンス ===`);
+            console.log('Full Response:', data);
+            
             if ('resultsets' in data) {
                 const resultsets = data['resultsets'];
                 if ('features' in resultsets) {
                     const features = resultsets['features'];
+                    
+                    // 各フィーチャーのpropertiesをログ出力
+                    console.log(`${config.name} Features (${features.length}件):`, features);
+                    features.forEach((feature, index) => {
+                        console.log(`${config.name} Feature ${index}:`, feature.properties);
+                    });
+                    
                     displayMarkersCallback(features);
                     showNotification(`${config.name}を${features.length}件表示しました`, 'success');
                 } else {

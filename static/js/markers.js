@@ -101,11 +101,11 @@ export function displayMarkers(features, currentCategoryParam, mapParam, markers
                     // 正確に該当するボタンを取得（IDで完全一致）
                     const favButton = popupContainer.querySelector(`#${buttonId}`);
                     if (favButton) {
-                        console.log('お気に入いボタンを見つけました:', resourceId);
+                        console.log('お気に入りボタンを見つけました:', resourceId);
                         
-                        // ポップアップ表示時に最新のお気に入い状態を反映
+                        // ポップアップ表示時に最新のお気に入り状態を反映
                         const currentIsFav = isFavorite(resourceId, currentCategoryParam, lat, lon);
-                        console.log(`${resourceId}のお気に入い状態:`, currentIsFav);
+                        console.log(`${resourceId}のお気に入り状態:`, currentIsFav);
                         
                         if (currentIsFav) {
                             favButton.textContent = '★ お気に入り済み';
@@ -130,7 +130,7 @@ export function displayMarkers(features, currentCategoryParam, mapParam, markers
                         newButton.addEventListener('click', function (e) {
                             e.preventDefault();
                             e.stopPropagation();
-                            console.log('お気に入いボタンがクリックされました:', resourceId, 'ボタン:', newButton);
+                            console.log('お気に入りボタンがクリックされました:', resourceId, 'ボタン:', newButton);
                             handleFavoriteButtonClick(
                                 resourceId,
                                 currentCategoryParam,
@@ -141,7 +141,7 @@ export function displayMarkers(features, currentCategoryParam, mapParam, markers
                             );
                         });
                     } else {
-                        console.warn('お気に入いボタンが見つかりません:', buttonId);
+                        console.warn('お気に入りボタンが見つかりません:', buttonId);
                     }
                 }
             });
@@ -158,7 +158,7 @@ export function displayMarkers(features, currentCategoryParam, mapParam, markers
 }
 
 // ========================================
-// お気に入いマーカーを地図に表示
+// お気に入りマーカーを地図に表示
 // ========================================
 export function displayFavoritesMarkers(features, markersArray, mapParam) {
     // featuresの型チェック
@@ -234,7 +234,7 @@ export function displayFavoritesMarkers(features, markersArray, mapParam) {
                         removeBtn.addEventListener('click', function (e) {
                             e.preventDefault();
                             e.stopPropagation();
-                            if (confirm('このお気に入いを削除しますか？')) {
+                            if (confirm('このお気に入りを削除しますか？')) {
                                 removeFavorite(resourceId, {
                                     category,
                                     lat,
@@ -246,7 +246,7 @@ export function displayFavoritesMarkers(features, markersArray, mapParam) {
                                 if (index > -1) {
                                     markersArray.splice(index, 1);
                                 }
-                                console.log(`お気に入いから削除: ${properties['name']}`);
+                                console.log(`お気に入りから削除: ${properties['name']}`);
                             }
                         });
                     }
@@ -261,7 +261,7 @@ export function displayFavoritesMarkers(features, markersArray, mapParam) {
         }
     }
 
-    console.log(`${markersArray.length}個のお気に入いマーカーを表示しました`);
+    console.log(`${markersArray.length}個のお気に入りマーカーを表示しました`);
 }
 
 // ========================================
@@ -293,7 +293,7 @@ export function createMarkerIcon(category) {
 // お気に入りボタンのクリックハンドラ
 // ========================================
 function handleFavoriteButtonClick(resourceId, category, properties, lat, lon, button) {
-    console.log('お気に入いボタンクリック:', resourceId);
+    console.log('お気に入りボタンクリック:', resourceId);
     console.log('ボタン要素:', button);
     console.log('ボタンID:', button.id);
 
