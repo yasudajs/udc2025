@@ -25,7 +25,7 @@ https://urbandata-challenge.jp/news/udc2025prize
 ### 1. リポジトリ取得
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/yasudajs/udc2025.git
 cd udc2025
 ```
 
