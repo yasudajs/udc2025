@@ -1,6 +1,6 @@
 # サーバー環境まとめ（ロリポップ / udc2025.yjs.jp）
 
-最終更新日: 2025-10-18
+最終更新日: 2026-06-14
 
 ## URL
 - https://udc2025.yjs.jp/
@@ -17,14 +17,14 @@
 - Werkzeug==2.2.3
 - requests==2.31.0
 - pandas==1.3.5 / numpy==1.21.6
-- MySQLクライアント: mysqlclient, PyMySQL, mysql-connector-python
+- MySQLクライアント: PyMySQL, mysql-connector-python
 
-詳細は `requirements_server.txt` を参照。
+詳細は `docs/requirements_server.txt` を参照。
 
 ## 注意点
 - Python 3.7系のため、最新のFlask 3.xは未対応
 - 外部パッケージの追加インストールが制限される可能性（サーバー側に依存）
-- 常駐プロセスの可否やWSGI/FCGIの設定方法はプランに依存
+- CGI/LSAPIの設定方法や利用可能範囲はプランに依存
 
 ## CGI設定（重要）
 
@@ -53,5 +53,5 @@
   - ファイルを削除して再アップロード
 
 ## 推奨方針
-- 依存バージョンの固定（requirements.txtをサーバー準拠に）
+- 依存バージョンの固定（`docs/requirements_server.txt` を基準に管理）
 - ログ設計とエラーハンドリングを明確化
