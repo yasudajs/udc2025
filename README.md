@@ -1,7 +1,13 @@
-# UDC2025
+# BODIK Data Viewer
 
 オープンデータを地図で可視化する Flask ベースの Web アプリケーションです。
 オープンデータ基盤として [BODIK API](https://www.bodik.jp/project/bodik-api/) を利用しています。
+
+本アプリはUDC2025応募作品であり、BDICK賞をいただくことが出来ました。
+ご協力いただきました皆様に、この場を借りて感謝申し上げます。
+
+アーバンデータチャレンジ2025 ファイナル審査結果
+https://urbandata-challenge.jp/news/udc2025prize
 
 この README は、次の2つを最短で進めるためのガイドです。
 
@@ -130,4 +136,29 @@ PR には次を含めてください。
 
 ## ライセンス
 
-ライセンスは今後追記予定です。
+### コード（Python/JavaScript/CSS など）
+
+MIT ライセンスの下で公開しています。
+詳細は [LICENSE](LICENSE) を参照してください。
+
+- 改造・フォーク・商用利用が自由です
+- 条件：著作権表示と MIT ライセンス全文を含める
+
+```
+Copyright (c) 2025- BODIK Data Viewer Project
+```
+
+### ドキュメント（docs/ 以下の Markdown ファイル）
+
+CC BY 4.0（表示）の下で公開しています。
+
+- 改造・共有・商用利用が自由です
+- 条件：著作権表示と元の著者を記載
+
+### BODIK API
+
+本プロジェクトで使用している BODIK API は、公益財団法人九州先端科学技術研究所により提供されています。
+ご利用の際は、以下の公式サイトの利用規約に従ってください。
+
+- [BODIK](https://www.bodik.jp/)
+- [BODIK API](https://www.bodik.jp/project/bodik-api/)
