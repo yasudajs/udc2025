@@ -29,7 +29,7 @@
 ## CGI設定（重要）
 
 ### シェバン（Shebang）
-- **サーバーモデル**: spdxxx（サーバー番号: spd156）
+- **サーバーモデル**: spdxxx
 - **Python パス**: `/usr/local/bin/python3.7`
 - **設定値**: `#!/usr/local/bin/python3.7`
 
