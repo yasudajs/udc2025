@@ -1,6 +1,6 @@
 # BODIK Data Viewer
 
-オープンデータを地図で可視化する Flask ベースの Web アプリケーションです。
+オープンデータを地図で可視化する静的Webアプリケーション（HTML/CSS/JS）です。
 オープンデータ基盤として [BODIK API](https://www.bodik.jp/project/bodik-api/) を利用しています。
 
 本アプリはUDC2025応募作品であり、BDICK賞をいただくことが出来ました。
@@ -29,55 +29,19 @@ git clone https://github.com/yasudajs/udc2025.git
 cd udc2025
 ```
 
-### 2. 仮想環境の作成と有効化
+### 2. アプリの起動（ローカルサーバー）
 
+本アプリはESモジュールを使用しているため、ファイルを直接ブラウザで開く（`file:///`）と正しく動作しません。以下のいずれかの方法でローカルWebサーバーを起動してください。
+
+**方法A: VSCodeを利用する場合（おすすめ）**
+拡張機能「Live Server」をインストールし、画面右下の「Go Live」をクリックします。自動的にブラウザが立ち上がります。
+
+**方法B: Pythonを利用する場合**
 ```bash
-python -m venv venv37
+python -m http.server 8000
 ```
-
-Windows (PowerShell):
-
-```powershell
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
-.\venv37\Scripts\Activate.ps1
-```
-
-Mac/Linux:
-
-```bash
-source venv37/bin/activate
-```
-
-### 3. 依存パッケージのインストール
-
-```bash
-pip install -r docs/requirements.txt
-```
-
-### 4. アプリ起動
-
-```bash
-python app.py
-```
-
 起動後、ブラウザで以下を開きます。
-
-- http://localhost:5000
-
-## 開発向けセットアップ
-
-### サーバー環境に寄せた依存で確認したい場合
-
-```bash
-pip install -r docs/requirements_server.txt
-```
-
-### よくあるトラブル
-
-- PowerShell で有効化できない:
-	- `Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned` を実行
-- ポート競合で起動しない:
-	- 他プロセスの停止、または起動ポート変更を検討
+- http://localhost:8000
 
 ## Fork して貢献する
 
@@ -104,12 +68,10 @@ PR には次を含めてください。
 
 ```text
 .
-|- app.py
-|- index.cgi
-|- templates/
-|- static/
-|  |- css/
-|  `- js/
+|- index.html
+|- css/
+|- js/
+|- favicon.ico
 `- docs/
 ```
 
@@ -125,9 +87,13 @@ PR には次を含めてください。
 
 ## デプロイ
 
-ロリポップ環境でのデプロイ例は以下を参照してください。
+本アプリケーションは純粋なクライアントサイド実装（HTML/CSS/JS）のため、GitHub Pages等の静的ホスティングサービスで簡単に公開可能です。
 
-- [docs/05_デプロイ手順.md](docs/05_デプロイ手順.md)
+**GitHub Pages での公開手順（例）:**
+1. GitHub リポジトリの **Settings > Pages** へアクセス
+2. **Build and deployment** の Source を `Deploy from a branch` に設定
+3. **Branch** に `master` ブランチの `/ (root)` を指定して保存
+4. 数分後に公開URLへアクセス可能になります。
 
 ## データ提供・謝辞
 
