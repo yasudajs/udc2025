@@ -19,6 +19,7 @@ https://urbandata-challenge.jp/news/udc2025prize
 - 地図上でのデータ表示
 - カテゴリ単位でのデータ切り替え
 - お気に入り登録と再表示
+- PWA（Progressive Web App）対応により、スマホ等でネイティブアプリのようにインストール・全画面表示が可能
 
 ## クイックスタート（ローカル環境で動作させるまで）
 
@@ -71,12 +72,20 @@ PR には次を含めてください。
 |- index.html
 |- css/
 |- js/
+|- images/          # PWA用アイコン画像など
 |- favicon.ico
+|- manifest.json    # PWA設定ファイル
+|- sw.js            # Service Worker
+|- offline.html     # オフライン時エラーページ
+|- historys.md      # 変更履歴
+|- AGENTS.md        # AIエージェント向け指示書
 `- docs/
 ```
 
 ## ドキュメント
 
+- 変更履歴: [historys.md](historys.md)
+- AI向け指示書: [AGENTS.md](AGENTS.md)
 - 用語集: [docs/00_用語集.md](docs/00_用語集.md)
 - 要件定義: [docs/01_要件定義.md](docs/01_要件定義.md)
 - 機能仕様: [docs/02_機能仕様.md](docs/02_機能仕様.md)
